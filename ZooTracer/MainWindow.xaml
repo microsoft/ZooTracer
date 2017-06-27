@@ -1,0 +1,272 @@
+﻿<Window x:Class="ZooTracer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:zt="clr-namespace:ZooTracer"
+        xmlns:props="clr-namespace:ZooTracer.Properties"
+        Title="zootracer" Height="768" Width="1366"
+        DataContext="{StaticResource ZooTracerModel}"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <DataTemplate x:Key="PatchItemTemplate">
+            <Image Source="{Binding}" Width="96" Height="96" Margin="2"/>
+        </DataTemplate>
+        <DataTemplate x:Key="PatchImageItemTemplate">
+            <StackPanel Orientation="Vertical" Margin="2">
+                <Image Source="{Binding Image}" Width="96" Height="96"/>
+                <TextBlock FontSize="{StaticResource SmallFontSize}" HorizontalAlignment="Center"><Run Text="frame number "/><Run Text="{Binding FrameNumber}"/></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="MatchImageItemTemplate">
+            <StackPanel Orientation="Vertical" Margin="2">
+                <Image Source="{Binding Image}" Width="96" Height="96"/>
+                <TextBlock FontSize="{StaticResource SmallFontSize}" HorizontalAlignment="Center"><Run Text="dist "/><Run Text="{Binding Distance,StringFormat=G5}"/></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type zt:GlassRectModel}">
+            <Ellipse Width="{Binding Width}" Height="{Binding Height}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" RenderTransform="{Binding Transform}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type zt:GlassPathModel}">
+            <Path Data="{Binding PathData}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" RenderTransform="{Binding Transform}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open" CanExecute="Open_CanExecute" Executed="Open_Executed"/>
+        <CommandBinding Command="ApplicationCommands.Close" CanExecute="Close_CanExecute" Executed="Close_Executed"/>
+        <CommandBinding Command="ComponentCommands.MoveLeft" CanExecute="Left_CanExecute" Executed="Left_Executed"/>
+        <CommandBinding Command="ComponentCommands.MoveRight" CanExecute="Right_CanExecute" Executed="Right_Executed"/>
+        <CommandBinding Command="{x:Static zt:MainWindow.LoadTraceCommand}" CanExecute="LoadTrace_CanExecute" Executed="LoadTrace_Executed"/>
+        <CommandBinding Command="{x:Static zt:MainWindow.SaveTraceCommand}" CanExecute="SaveTrace_CanExecute" Executed="SaveTrace_Executed"/>
+        <CommandBinding Command="{x:Static zt:MainWindow.StartHereCommand}" CanExecute="StartHere_CanExecute" Executed="StartHere_Executed"/>
+        <CommandBinding Command="{x:Static zt:MainWindow.StopHereCommand}" CanExecute="StopHere_CanExecute" Executed="StopHere_Executed"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TabControl TabStripPlacement="Left" Grid.Row="1" HorizontalContentAlignment="Left" Margin="10" SelectedIndex="{Binding PageIndex, Mode=OneWayToSource}">
+            <TabItem x:Name="tabSettings" Header="file">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.ColumnSpan="4" Margin="0,24" Text="zootracer — trace animals in a video" VerticalAlignment="Center" FontSize="48" HorizontalAlignment="Center" FontFamily="Segoe UI Light" Foreground="{DynamicResource TitleTextColor}"/>
+                    <!-- Row 1-->
+                    <TextBlock Grid.Row="1" Text="video file name:" VerticalAlignment="Center" Margin="0,9"/>
+                    <TextBlock Grid.Row="1" Text="{Binding VideoFileName}" Grid.Column="2" VerticalAlignment="Center" MinWidth="10" Margin="0,9" HorizontalAlignment="Left"/>
+                    <Button Grid.Row="1" Content="open video" Command="ApplicationCommands.Open" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <!--<Button Content="Close" Command="ApplicationCommands.Close" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Width="115" Margin="125,0,0,0"/>-->
+                    <TextBlock Grid.Row="2" Text="video file location:" Style="{StaticResource propLabel}"/>
+                    <TextBlock Grid.Row="2" Text="{Binding VideoFileLocation}" MinWidth="10" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource propValue}"/>
+                    <TextBlock Grid.Row="3" Text="frame size, #, fps and codec:" Style="{StaticResource propLabel}"/>
+                    <TextBlock Grid.Row="3" Text="{Binding VideoProperties}" MinWidth="10" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource propValue}"/>
+                    <TextBlock Grid.Row="5" Text="trace file name:" Style="{StaticResource propLabel}"/>
+                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding TraceFileName}" Style="{StaticResource propValue}"/>
+                    <StackPanel Grid.Row="5" Grid.Column="3" Orientation="Horizontal">
+                        <Button Content="save the trace as" Command="{x:Static zt:MainWindow.SaveTraceCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="load a trace" Command="{x:Static zt:MainWindow.LoadTraceCommand}" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="6" Text="trace file location:" Style="{StaticResource propLabel}"/>
+                    <TextBlock Grid.Row="6" Text="{Binding TraceFileLocation}" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource propValue}"/>
+                    <TextBlock Grid.Row="7" Grid.ColumnSpan="4" VerticalAlignment="Bottom"><Run Text="v. "/><Run Text="{Binding Version, Mode=OneWay}"/><Run Text=" © Microsoft corp., 2014 "/><Hyperlink Click="Hyperlink_Click">http://research.microsoft.com/zootracer</Hyperlink></TextBlock>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="tabTrace" Header="interactive trace">
+                <Grid Margin="10">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="Black" BorderThickness="5" CornerRadius="5" Background="Black" Grid.Column="2" Grid.RowSpan="2" Margin="10,0,0,0">
+                            <Grid>
+                                <Image x:Name="videoFrame" Source="{Binding FrameImageSource,FallbackValue={StaticResource NoImageSource}}" MouseMove="videoFrame_MouseMove" MouseLeave="videoFrame_MouseLeave" MouseUp="videoFrame_MouseUp" TouchEnter="videoFrame_TouchMove" TouchMove="videoFrame_TouchMove" TouchLeave="videoFrame_TouchLeave" TouchUp="videoFrame_TouchUp"/>
+                                <ItemsControl ItemsSource="{Binding GlassItems}" Background="Transparent" IsHitTestVisible="False" Loaded="glass_Loaded" SizeChanged="updateGlassSize">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                        <DockPanel Grid.Row="1" Grid.Column="1" Margin="0,40,0,0" LastChildFill="False">
+                            <Border DockPanel.Dock="Top" BorderThickness="0,0,0,1" BorderBrush="Black">
+                                <TextBlock Text="track" FontSize="{StaticResource LargeFontSize}" TextAlignment="Center"/>
+                            </Border>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding FrameTraceState, FallbackValue=undefined}" Height="30" TextAlignment="Center" Margin="0,10,0,0"/>
+                            <Button DockPanel.Dock="Top"  Content="occlude" Click="Occlude_Click"/>
+                            <Button DockPanel.Dock="Top"  Content="clear" Click="Clear_Click"/>
+                            <Button DockPanel.Dock="Top"  Content="clear all" Click="ClearAll_Click"/>
+                            <Button DockPanel.Dock="Top"  Content="start here" Command="{x:Static zt:MainWindow.StartHereCommand}"/>
+                            <Button DockPanel.Dock="Top"  Content="stop here" Command="{x:Static zt:MainWindow.StopHereCommand}"/>
+                            <Image DockPanel.Dock="Bottom" Source="{Binding CursorImage}" Width="96" Height="96" Margin="2,0,0,2" HorizontalAlignment="Center"/>
+                            <TextBlock DockPanel.Dock="Bottom"  TextAlignment="Center"><Run Text="("/><Run Text="{Binding CursorPosition.Item1, FallbackValue=-, Mode=OneWay}"/><Run Text=", "/><Run Text="{Binding CursorPosition.Item2, FallbackValue=-, Mode=OneWay}"/><Run Text=")"/></TextBlock>
+                        </DockPanel>
+                        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,0">
+                            <Button Command="ComponentCommands.MoveLeft" Width="{StaticResource DefaultControlHeight}" Content="&lt;" FontSize="{StaticResource LargeFontSize}"/>
+                            <TextBox Width="80" Text="{Binding CurrentFrameNumber}" FontSize="{StaticResource LargeFontSize}"/>
+                            <Button Command="ComponentCommands.MoveRight" Width="{StaticResource DefaultControlHeight}" Content="&gt;" FontSize="{StaticResource LargeFontSize}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,40,0,0">
+                            <Image Source="{Binding FrameInfoImage, Mode=OneWay}" Stretch="Fill" VerticalAlignment="Stretch" Grid.Row="1" Width="5" Margin="0,5"/>
+                            <Slider Maximum="{Binding MaxFrameNumber}" Value="{Binding CurrentFrameNumber}"  IsDirectionReversed="True" Orientation="Vertical" Margin="15,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="settings">
+                <Grid Margin="10">
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <!-- Row 1-->
+                            <TextBlock Grid.Row="0" Text="tracing parameters" Grid.ColumnSpan="3" Style="{StaticResource propTitle}"/>
+                            <TextBlock Grid.Row="1" Text="speed penalty:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding lambda_u,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="1" Text="{Binding lambda_u,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="2" Text="appearance penalty:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="2" Text="{Binding lambda_d,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="2" Text="{Binding lambda_d,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="3" Text="occlusion penalty:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="3" Text="{Binding lambda_o,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="3" Text="{Binding lambda_o,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="4" Text="max occlusion duration (frames):" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="4" Text="{Binding max_occlusion_duration,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="4" Text="{Binding max_occlusion_duration,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="5" Text="testees per key point:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="5" Text="{Binding matches_per_keyframe,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="5" Text="{Binding matches_per_keyframe,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="6" Text="max testees per frame:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="6" Text="{Binding max_matches_per_frame,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="6" Text="{Binding max_matches_per_frame,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="7" Text="appearance thershold:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="7" Text="{Binding matches_appearance_threshold,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="7" Text="{Binding matches_appearance_threshold,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="8" Text="index approx ratio:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="8" Text="{Binding index_approx_ratio,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="8" Text="{Binding index_approx_ratio,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="9" Text="pca and indexing parameters"  Grid.ColumnSpan="3" Style="{StaticResource propTitle}"/>
+                            <TextBlock Grid.Row="10" Text="patch size (px):" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="10" Text="{Binding patch_size,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="10" Text="{Binding patch_size,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="11" Text="pca dimension:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="11" Text="{Binding pca_dim,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="11" Text="{Binding pca_dim,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="12" Text="number of samples to build pca:" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="12" Text="{Binding num_pca_data,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="12" Text="{Binding num_pca_data,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                            <TextBlock Grid.Row="13" Text="index accuracy (px):" Style="{StaticResource propLabel}"/>
+                            <TextBlock Grid.Row="13" Text="{Binding index_accuracy,Source={x:Static props:Settings.Default}}" Grid.Column="2" Style="{StaticResource propValue}"/>
+                            <zt:PropertyEdit Grid.Row="13" Text="{Binding index_accuracy,Source={x:Static props:Settings.Default},StringFormat=g6}" Grid.Column="3" HorizontalAlignment="Left" Width="400"/>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="projector">
+                <Grid Margin="10">
+                    <ItemsControl ItemsSource="{Binding ProjectorPrincipals}" ItemTemplate="{DynamicResource PatchItemTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Grid>
+            </TabItem>
+            <TabItem Header="matching">
+                <Grid Margin="10">
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="131"/>
+                            <ColumnDefinition Width="131"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border BorderBrush="Black" BorderThickness="5" CornerRadius="5" Background="Black" Grid.Column="2" Grid.RowSpan="3" Margin="10,0,0,0">
+                            <Grid>
+                                <Image Source="{Binding FrameImageSource,FallbackValue={StaticResource NoImageSource}}" MouseMove="videoFrame_MouseMove" MouseLeave="videoFrame_MouseLeave" MouseUp="videoFrame_MouseUp"/>
+                                <ItemsControl ItemsSource="{Binding GlassItems}" Background="Transparent" IsHitTestVisible="False" Loaded="updateGlassSize" SizeChanged="updateGlassSize">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                        <TextBlock Text="key points" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="matching" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding KeyPoints}" SelectedIndex="{Binding KeyPointSelectedImage}" ItemTemplate="{DynamicResource PatchImageItemTemplate}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                        <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MatchImages}" SelectedIndex="{Binding MatchSelectedImage}" ItemTemplate="{DynamicResource MatchImageItemTemplate}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                        <Image Source="{Binding KeyPointReconstructedImage}" Width="100" Height="100" Margin="0,10,0,0" Grid.Row="2"/>
+                        <Image Source="{Binding MatchReconstructedImage}" Width="100" Height="100" Margin="0,10,0,0" Grid.Row="2" Grid.Column="1"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="console">
+                <Grid  Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Button Content="clear" HorizontalAlignment="Left" Width="150"/>
+                    <ListBox Grid.Row="2" ItemsSource="{Binding StdOut}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="11" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <!--<TextBlock Margin="0,24" Text="zootracer — trace animals in a video" VerticalAlignment="Center" FontSize="48" HorizontalAlignment="Center" FontFamily="Segoe UI Light" Foreground="{DynamicResource TitleTextColor}"/>-->
+
+    </Grid>
+</Window>

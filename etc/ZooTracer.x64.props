@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <OpenCVLibPath>x64\vc12\</OpenCVLibPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>..\include;$(OpenCVDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OpenCVDir)$(OpenCVLibPath)lib\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link Condition="$(Configuration) == 'Debug'">
+      <AdditionalDependencies>opencv_core$(OpenCVVersion)d.lib;opencv_highgui$(OpenCVVersion)d.lib;opencv_imgproc$(OpenCVVersion)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link Condition="$(Configuration) != 'Debug'">
+      <AdditionalDependencies>opencv_core$(OpenCVVersion).lib;opencv_highgui$(OpenCVVersion).lib;opencv_imgproc$(OpenCVVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="OpenCVLibPath">
+      <Value>$(OpenCVLibPath)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

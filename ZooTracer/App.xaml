@@ -1,0 +1,19 @@
+﻿<Application x:Class="ZooTracer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:my="clr-namespace:ZooTracer"
+             StartupUri="MainWindow.xaml"
+             Startup="Application_Startup">
+    <Application.Resources>
+         
+    	<ResourceDictionary>
+            <my:ZooTracerModel x:Key="ZooTracerModel"/>
+            <BitmapImage x:Key="NoImageSource" UriSource="Philips_PM5544_(SECAM_variation).jpg"/>
+            <ResourceDictionary.MergedDictionaries>
+    			<ResourceDictionary Source="Design.xaml"/>
+    		</ResourceDictionary.MergedDictionaries>
+    	</ResourceDictionary>
+        
+        
+    </Application.Resources>
+</Application>

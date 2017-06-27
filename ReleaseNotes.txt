@@ -1,0 +1,53 @@
+zootracer v.1.0 -- 2014-02-12
+=============================
+
+http://research.microsoft.com/zootracer
+
+Prerequisites
+-------------
+
+- 64-bit PC with 64-bit Windows OS. 4GB RAM recommended as a minimum. The
+  larger video files you process the more RAM you need. 4 CPU cores
+  recommended although the more cores you have the more interactive the tool.
+- Microsoft .NET Framework v.4.5 or later. The framework is available for
+  download from http://www.microsoft.com/en-us/download/details.aspx?id=30653.
+- Visual C++ 2013 redistributable packages available for download from
+  http://www.microsoft.com/en-us/download/details.aspx?id=40784
+
+Installation instructions
+-------------------------
+
+1. A link to zootracer.zip can be found on the tool home page
+   http://research.microsoft.com/zootracer. Download the archive and unpack it
+   to any folder on your hard disk.
+2. Download OpenCV v.2.4.8 from http://opencv.org/downloads.html and unpack
+   the archive. Copy the following files from 'opencv\build\x64\vc12\bin'
+   subfolder to the zootracer folder:
+      opencv_core248.dll
+      opencv_highgui248.dll
+      opencv_ffmpeg248_64.dll
+
+Getting started
+---------------
+
+Zootracer implements an interactive algorithm from the paper A. M. Buchanan
+and A. W. Fitzgibbon, "Interactive Feature Tracking using K-D Trees and
+Dynamic Programming", in Proceedings of the IEEE Conference on Computer
+Vision and Pattern Recognition, New York, January 2006.
+
+Start zootrace.exe, open a video and switch to 'interactive trace' tab.
+The tool first runs two-phase preprocessing routine. During the first phase
+the colour indicator along the left edge of the screen is red. You can
+navigate the video but interactive trace controls do nothing at this stage.
+First stage usually takes several minutes depending on your CPU speed.
+
+During the second stage the color indicator progresses from blue to gray.
+You may start building a trace during this stage.
+
+Zootrcer stores the results of pre-processing in a subfolder next to the
+video file and reuses the results next time you start the tool. Pre-pro-
+cessing may restart when you change some of zootracer parameters on the
+'settings' page.
+
+You may save/restore a trace with all the parameters in a csv file using appropri-
+ate buttons on 'file' page.

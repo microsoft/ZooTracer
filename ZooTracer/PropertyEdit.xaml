@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="ZooTracer.PropertyEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:my="clr-namespace:ZooTracer"
+             mc:Ignorable="d" >
+    <Grid>
+        <Button Name="Selector" Content="edit" Click="EditButton_Click" Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor},Path=BaseStateVisibility}" HorizontalAlignment="Left"/>
+        <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor},Path=EditStateVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor},Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Name="Editor"/>
+            <Button Content="apply" Grid.Column="1" Click="ApplyButton_Click" IsDefault="True"/>
+            <Button Content="cancel edit" Grid.Column="2" Click="CancelButton_Click" IsCancel="True"/>
+            <Button Content="reset to default" Grid.Column="3" Click="ResetButton_Click"/>
+        </Grid>
+    </Grid>
+</UserControl>
