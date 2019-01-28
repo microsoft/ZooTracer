@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include <ztTrace.h>
 #include <ztLog.h>
 #include <sstream>

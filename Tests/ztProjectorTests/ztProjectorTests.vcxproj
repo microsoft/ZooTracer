@@ -66,7 +66,7 @@
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OpenCVDir)$(OpenCVLibPath)bin\opencv_core$(OpenCVVersion)d.dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)OpenCV2\$(OpenCVLibPath)bin\opencv_core$(OpenCVVersion)d.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,7 +88,7 @@
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OpenCVDir)$(OpenCVLibPath)bin\opencv_core$(OpenCVVersion).dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)OpenCV2\$(OpenCVLibPath)bin\opencv_core$(OpenCVVersion).dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
