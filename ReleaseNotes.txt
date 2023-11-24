@@ -20,12 +20,11 @@ Installation instructions
 1. A link to zootracer.zip can be found on the tool home page
    http://research.microsoft.com/zootracer. Download the archive and unpack it
    to any folder on your hard disk.
-2. Download OpenCV v.2.4.8 from http://opencv.org/downloads.html and unpack
-   the archive. Copy the following files from 'opencv\build\x64\vc12\bin'
-   subfolder to the zootracer folder:
-      opencv_core248.dll
-      opencv_highgui248.dll
-      opencv_ffmpeg248_64.dll
+2. Download OpenCV v.2.4.13 from http://opencv.org/downloads.html and unpack
+   the archive. Copy the following folders from 'opencv\build' to 'OpenCV2' folder:
+      include
+      x64
+      x86
 
 Getting started
 ---------------

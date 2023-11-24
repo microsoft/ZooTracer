@@ -2,11 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OpenCVLibPath>x64\vc12\</OpenCVLibPath>
+    <OpenCVVersion>2413</OpenCVVersion>
+    <OpenCVLibPath>x64\vc14\</OpenCVLibPath>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>..\include;$(OpenCVDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OpenCVDir)$(OpenCVLibPath)lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;$(SolutionDir)OpenCV2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)OpenCV2\$(OpenCVLibPath)lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link Condition="$(Configuration) == 'Debug'">

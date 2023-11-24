@@ -15,11 +15,16 @@ namespace ZooTracer
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            // [QUICK FIX] forcefully add the relative path
+            // "ZooTracer"  runs in $(SolutionDir)ZooTracer\bin\$(PlatformShortName)\$(Configuration)
+            // added "OpenCV" is in $(SolutionDir)OpenCV2\$(PlatformShortName)\$(Configuration)
+            Environment.SetEnvironmentVariable("OpenCVDir", @"..\..\..\..\OpenCV2\");
+
             if (!String.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OpenCVDir")))
             {
                 var platform = Environment.Is64BitProcess ? "x64" : "x86";
                 Environment.SetEnvironmentVariable("PATH",
-                    Environment.ExpandEnvironmentVariables(@"%PATH%;%OpenCVDir%" + platform + @"\vc11\bin"));
+                    Environment.ExpandEnvironmentVariables(@"%PATH%;%OpenCVDir%" + platform + @"\vc14\bin"));
             }
             base.OnStartup(e);
         }
